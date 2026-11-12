@@ -1,0 +1,8 @@
+# Generated files: never committed (raw files look like real patient data even
+# though every record is synthetic; outputs are reproducible from the seed).
+# Project: Sunshine Registry.
+data/
+outputs/
+__pycache__/
+*.pyc
+.venv/
