@@ -10,7 +10,7 @@ Everything here is synthetic. All 5,000 patients are made up by a seeded generat
 
 1. **Generate** three provider files (about 6,300 reports for 5,000 patients). Each provider sends the same kind of data differently: different column names, different date formats, an extra notes column. About a quarter of the patients show up in two providers' files. A few bad rows are mixed in on purpose.
 2. **Ingest** the files into a staging table in SQLite, mapping each provider's columns onto one shared schema. Nothing is cleaned at this step.
-3. **Validate** the staged rows. Rows with no patient name, a date of birth that does not parse, a missing or future diagnosis date, a diagnosis code the registry does not accept, or an age at diagnosis outside 20 to 100 get dropped. Duplicate report IDs keep the first occurrence. County spellings get standardized (54 fixed) and bad sex values become "Unknown" (6 fixed). Everything is counted.
+3. **Validate** the staged rows. Rows with no patient name, a date of birth that does not parse, a missing or future diagnosis date, a diagnosis code the registry does not accept, or an age at diagnosis outside 20 to 100 get dropped. Duplicate report IDs keep the first occurrence. County spellings get standardized (323 fixed) and bad sex values become "Unknown" (36 fixed). Everything is counted.
 4. **Integrate** the clean rows into the registry. Patients are matched on a salted hash of name plus date of birth, so no raw identifiers land in the registry tables. Each patient gets one record: the earliest diagnosis date, the code and county from that report, and how many providers reported them. Two tables result: one row per patient, one row per accepted report.
 5. **Report** with SQL queries against the registry: new patients by month, acceptance by provider, patients by county, and diagnosis code counts. The queries live in `sql/reporting_queries.sql`, not in code, so they can be read on their own. The outputs are a report (JSON and Markdown), three CSVs, and a self-contained HTML dashboard with the monthly chart and the quality numbers, plus an audit log with one event per stage.
 
@@ -30,7 +30,7 @@ python -m pipeline
 Options:
 
 ```bash
-python run_pipeline.py --patients 900 --seed 42 --salt my-secret-salt --regenerate
+python run_pipeline.py --patients 5000 --seed 42 --salt my-secret-salt --regenerate
 ```
 
 `--patients` and `--seed` control the fake data. `--salt` (or the `PIPELINE_SALT` environment variable) sets the hash salt. Without one it falls back to a dev default and the run gets flagged in the audit log. In real use the salt would live in a secrets store, not in the code.
@@ -38,8 +38,8 @@ python run_pipeline.py --patients 900 --seed 42 --salt my-secret-salt --regenera
 With Docker:
 
 ```bash
-docker build -t florida-parkinsons-registry-pipeline .
-docker run --rm -v "$PWD/outputs:/app/outputs" florida-parkinsons-registry-pipeline
+docker build -t sunshine-registry .
+docker run --rm -v "$PWD/outputs:/app/outputs" sunshine-registry
 ```
 
 ## What came out

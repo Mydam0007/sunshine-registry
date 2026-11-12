@@ -94,7 +94,7 @@ def _diagnosis_date(rng: random.Random, dob: date) -> date:
     return _random_date(rng, earliest, DX_END)
 
 
-def generate(n_patients: int = 900, seed: int = 42) -> dict[str, pd.DataFrame]:
+def generate(n_patients: int = 5000, seed: int = 42) -> dict[str, pd.DataFrame]:
     """Generate one raw file per provider and return them as dataframes."""
     rng = random.Random(seed)
     patients = []
@@ -178,7 +178,7 @@ def _inject_defects(df: pd.DataFrame, rng: random.Random) -> pd.DataFrame:
 
 
 def write_raw(
-    n_patients: int = 900,
+    n_patients: int = 5000,
     seed: int = 42,
     raw_dir: str | Path = "data/raw",
 ) -> dict[str, Path]:
